@@ -22,6 +22,21 @@
       </div>
 
       <div class="form-group">
+        <label for="type">Type</label>
+        <select
+          class="form-control"
+          id="type"
+          required
+          v-model="currentTutorial.type"
+          name="type"
+        >
+          <option value="BOOK">BOOK</option>
+          <option value="MOVIE">MOVIE</option>
+          <option value="MUSIC">MUSIC</option>
+        </select>
+      </div>
+
+      <div class="form-group">
         <label><strong>Status:</strong></label>
         {{ currentTutorial.published ? "Published" : "Pending" }}
       </div>
@@ -49,7 +64,6 @@
     <button type="submit" class="badge badge-success" @click="updateTutorial">
       Update
     </button>
-    <p>{{ message }}</p>
   </div>
 
   <div v-else>
@@ -76,8 +90,11 @@ export default defineComponent({
     getTutorial(id: any) {
       TutorialDataService.get(id)
         .then((response: ResponseData) => {
-          this.currentTutorial = response.data;
-          console.log(response.data);
+          if (response.data != null) {
+            this.currentTutorial = response.data.item;
+          } else {
+            console.log(response.data);
+          }
         })
         .catch((e: Error) => {
           console.log(e);
@@ -89,14 +106,14 @@ export default defineComponent({
         id: this.currentTutorial.id,
         title: this.currentTutorial.title,
         description: this.currentTutorial.description,
+        type: this.currentTutorial.type,
         published: status,
       };
 
       TutorialDataService.update(this.currentTutorial.id, data)
-        .then((response: ResponseData) => {
-          console.log(response.data);
+        .then(() => {
           this.currentTutorial.published = status;
-          this.message = "The status was updated successfully!";
+          alert("The published was updated successfully!");
         })
         .catch((e: Error) => {
           console.log(e);
@@ -105,9 +122,8 @@ export default defineComponent({
 
     updateTutorial() {
       TutorialDataService.update(this.currentTutorial.id, this.currentTutorial)
-        .then((response: ResponseData) => {
-          console.log(response.data);
-          this.message = "The tutorial was updated successfully!";
+        .then(() => {
+          alert("The item was updated successfully!");
         })
         .catch((e: Error) => {
           console.log(e);
@@ -116,8 +132,7 @@ export default defineComponent({
 
     deleteTutorial() {
       TutorialDataService.delete(this.currentTutorial.id)
-        .then((response: ResponseData) => {
-          console.log(response.data);
+        .then(() => {
           this.$router.push({ name: "tutorials" });
         })
         .catch((e: Error) => {

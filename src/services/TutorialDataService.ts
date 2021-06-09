@@ -27,7 +27,7 @@ class TutorialDataService {
   }
 
   findByTitle(title: string): Promise<any> {
-    return http.get(`/tutorials?title=${title}`);
+    return http.get(`/tutorials/find/${title}`);
   }
 }
 

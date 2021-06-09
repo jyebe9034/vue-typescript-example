@@ -20,7 +20,7 @@
       </div>
     </div>
     <div class="col-md-6">
-      <h4>Tutorials List</h4>
+      <h4>List</h4>
       <ul class="list-group">
         <li
           class="list-group-item"
@@ -39,13 +39,17 @@
     </div>
     <div class="col-md-6">
       <div v-if="currentTutorial.id">
-        <h4>Tutorial</h4>
+        <h4>Detail</h4>
         <div>
           <label><strong>Title:</strong></label> {{ currentTutorial.title }}
         </div>
         <div>
           <label><strong>Description:</strong></label>
           {{ currentTutorial.description }}
+        </div>
+        <div>
+          <label><strong>Type:</strong></label>
+          {{ currentTutorial.type }}
         </div>
         <div>
           <label><strong>Status:</strong></label>
@@ -86,8 +90,7 @@ export default defineComponent({
     retrieveTutorials() {
       TutorialDataService.getAll()
         .then((response: ResponseData) => {
-          this.tutorials = response.data;
-          console.log(response.data);
+          this.tutorials = response.data.list;
         })
         .catch((e: Error) => {
           console.log(e);
@@ -107,8 +110,7 @@ export default defineComponent({
 
     removeAllTutorials() {
       TutorialDataService.deleteAll()
-        .then((response: ResponseData) => {
-          console.log(response.data);
+        .then(() => {
           this.refreshList();
         })
         .catch((e: Error) => {
@@ -117,15 +119,18 @@ export default defineComponent({
     },
 
     searchTitle() {
-      TutorialDataService.findByTitle(this.title)
-        .then((response: ResponseData) => {
-          this.tutorials = response.data;
-          this.setActiveTutorial({} as Tutorial);
-          console.log(response.data);
-        })
-        .catch((e: Error) => {
-          console.log(e);
-        });
+      if (this.title) {
+        TutorialDataService.findByTitle(this.title)
+          .then((response: ResponseData) => {
+            this.tutorials = response.data.list;
+            this.setActiveTutorial({} as Tutorial);
+          })
+          .catch((e: Error) => {
+            console.log(e);
+          });
+      } else {
+        this.refreshList();
+      }
     },
   },
   mounted() {

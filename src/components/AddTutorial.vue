@@ -24,6 +24,21 @@
         />
       </div>
 
+      <div class="form-group">
+        <label for="type">SelectType</label>
+        <select
+          class="form-control"
+          id="type"
+          required
+          v-model="tutorial.type"
+          name="type"
+        >
+          <option value="BOOK">BOOK</option>
+          <option value="MOVIE">MOVIE</option>
+          <option value="MUSIC">MUSIC</option>
+        </select>
+      </div>
+
       <button @click="saveTutorial" class="btn btn-success">Submit</button>
     </div>
 
@@ -48,6 +63,7 @@ export default defineComponent({
         id: null,
         title: "",
         description: "",
+        type: "",
         published: false,
       } as Tutorial,
       submitted: false,
@@ -58,12 +74,13 @@ export default defineComponent({
       let data = {
         title: this.tutorial.title,
         description: this.tutorial.description,
+        type: this.tutorial.type,
+        published: this.tutorial.published,
       };
 
       TutorialDataService.create(data)
         .then((response: ResponseData) => {
           this.tutorial.id = response.data.id;
-          console.log(response.data);
           this.submitted = true;
         })
         .catch((e: Error) => {
@@ -73,7 +90,7 @@ export default defineComponent({
 
     newTutorial() {
       this.submitted = false;
-      this.tutorial = {} as Tutorial;
+      this.tutorial = { published: false } as Tutorial;
     },
   },
 });
